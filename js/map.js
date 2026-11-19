@@ -3,13 +3,23 @@
 
    LƯU Ý DỮ LIỆU:
    - Marker đỏ đặc  = vị trí địa lý Mũi Cà Mau (có tọa độ thực).
-   - Marker viền đứt = vị trí cột sóng MINH HỌA, KHÔNG phải tọa độ trạm Viettel thực tế.
+   - Marker viền đứt = các vị trí cột sóng MINH HỌA (7 điểm), KHÔNG phải tọa độ trạm Viettel thực tế.
    Khi có tọa độ trạm xác thực, thêm vào mảng STATIONS bên dưới. */
 (function () {
   'use strict';
 
   var CAPE = { lat: 8.6058, lng: 104.7228 };
-  var DEMO = { lat: 8.6079, lng: 104.7189 };           // minh họa – không phải tọa độ trạm thực
+  // Các vị trí cột sóng MINH HỌA (không phải tọa độ trạm thực tế): 1 điểm gần mũi + 6 điểm rải quanh Đất Mũi,
+  // đặt trên đường/đất liền có thật theo dữ liệu OpenStreetMap, cách nhau ≥ 1,4 km để bố cục thoáng.
+  var DEMOS = [
+    { lat: 8.60790, lng: 104.71890 },
+    { lat: 8.61575, lng: 104.73114 },
+    { lat: 8.60873, lng: 104.74207 },
+    { lat: 8.62789, lng: 104.72352 },
+    { lat: 8.62023, lng: 104.74822 },
+    { lat: 8.63314, lng: 104.74418 },
+    { lat: 8.60334, lng: 104.76093 }
+  ];
   var STATIONS = [];                                    // [{ name, lat, lng }] – chỉ thêm khi có dữ liệu xác thực
 
   function init() {
@@ -63,10 +73,12 @@
       '<b>Mũi Cà Mau – Đất Mũi</b>Điểm cực Nam trên đất liền của Tổ quốc, nơi rừng ngập mặn gặp biển.' +
       '<em>Vị trí địa lý thực tế.</em>', { maxWidth: 260 });
 
-    var demoMarker = L.marker([DEMO.lat, DEMO.lng], { icon: pinIcon('pin--demo'), title: 'Vị trí cột sóng minh họa', alt: 'Vị trí cột sóng minh họa', riseOnHover: true }).addTo(map);
-    demoMarker.bindPopup(
-      '<b>Cột sóng – vị trí minh họa</b>Biểu tượng cho hạ tầng viễn thông Viettel tại khu vực Đất Mũi.' +
-      '<em>Không phải tọa độ trạm thực tế.</em>', { maxWidth: 260 });
+    DEMOS.forEach(function (d, i) {
+      L.marker([d.lat, d.lng], { icon: pinIcon('pin--demo'), title: 'Vị trí cột sóng minh họa ' + (i + 1), alt: 'Vị trí cột sóng minh họa ' + (i + 1), riseOnHover: true })
+        .addTo(map)
+        .bindPopup('<b>Cột sóng – vị trí minh họa ' + (i + 1) + '/' + DEMOS.length + '</b>Biểu tượng cho hạ tầng viễn thông Viettel quanh khu vực Đất Mũi.' +
+                   '<em>Không phải tọa độ trạm thực tế.</em>', { maxWidth: 260 });
+    });
 
     STATIONS.forEach(function (s) {
       L.marker([s.lat, s.lng], { icon: pinIcon(), title: s.name }).addTo(map).bindPopup('<b>' + s.name + '</b>');
@@ -107,8 +119,11 @@
 
     // Chuyển động vào khu vực Đất Mũi khi bản đồ xuất hiện
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) map.setView([8.6070, 104.7210], 14.5);
-    else map.flyTo([8.6070, 104.7210], 14.5, { duration: 3.2, easeLinearity: .25 });
+    var all = [[CAPE.lat, CAPE.lng]].concat(DEMOS.map(function (d) { return [d.lat, d.lng]; }));
+    var bounds = L.latLngBounds(all);
+    var pad = L.point(el.clientWidth < 640 ? 36 : 90, 70);
+    if (reduce) map.fitBounds(bounds, { paddingTopLeft: pad, paddingBottomRight: pad, maxZoom: 14.5 });
+    else map.flyToBounds(bounds, { paddingTopLeft: pad, paddingBottomRight: pad, maxZoom: 14.5, duration: 3.2, easeLinearity: .25 });
 
     window.datMuiMap = map;
   }

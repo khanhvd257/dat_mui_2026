@@ -1,12 +1,11 @@
-/* Màn rèm mở đầu – chỉ hiện ở lần đầu vào trang (cờ lưu trong localStorage).
-   Thêm ?curtain=1 vào địa chỉ để xem lại khi trình diễn.
+/* Màn rèm mở đầu – hiện ở mọi lần tải trang (kể cả tải lại F5 hoặc mở lại tab).
+   Thêm ?curtain=0 vào địa chỉ để bỏ qua khi phát triển.
    Chạm / nhấn Enter / Space → rèm mở trong ~2 giây, phát nhạc (lượt chạm này là thao tác hợp lệ của khách),
    ảnh nền thu phóng và chữ chạy từ hai bên. */
 (function () {
   'use strict';
 
   var root = document.documentElement;
-  var KEY = 'viettel-datmui-curtain-seen';
   var curtain = document.getElementById('curtain');
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -30,7 +29,6 @@
   }
   split();
 
-  function mark() { try { localStorage.setItem(KEY, '1'); } catch (e) { /* bỏ qua */ } }
   var guarded = ['header', 'main', 'footer'].map(function (s) { return document.querySelector(s); }).filter(Boolean);
   function setInert(on) { guarded.forEach(function (el) { if (on) el.setAttribute('inert', ''); else el.removeAttribute('inert'); }); }
 
@@ -50,11 +48,10 @@
   function open(fast) {
     if (opened) return;
     opened = true;
-    mark();
     fast = fast || reduce;
 
     // 1) nhạc: phải gọi ngay trong lượt chạm của khách (trình duyệt mới cho phát có tiếng)
-    if (window.datMuiMusic && window.datMuiMusic.startWithFade) window.datMuiMusic.startWithFade(fast ? 800 : 2000);
+    if (window.datMuiMusic && window.datMuiMusic.startWithFade) window.datMuiMusic.startWithFade(1500);
 
     // 2) bắt đầu chuyển động ở khung hình kế tiếp, tách khỏi việc khởi động âm thanh để không bị khựng
     requestAnimationFrame(function () {

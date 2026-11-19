@@ -18,12 +18,13 @@
   var shareBtn = document.getElementById('cert-share');
   var resetBtn = document.getElementById('cert-reset');
   var certError = document.getElementById('cert-error');
-  var panel = document.querySelector('.checkin__panel');
-  var petalBox = panel.querySelector('.petals');
+  var section = document.getElementById('checkin');
+  var petalBox = section.querySelector('.petals');
   var current = null;
 
   // cánh mai rơi trên khung chứng nhận (CSS animation, tắt khi người dùng giảm chuyển động)
   function startPetals() {
+    petalBox.style.setProperty('--fall', (section.offsetHeight + 60) + 'px');
     if (petalBox.childElementCount) return;
     for (var i = 0; i < 16; i++) {
       var p = document.createElement('i');
@@ -66,6 +67,7 @@
   }
 
   /* ---------- nền vàng hoa mai (vẽ bằng canvas, ngẫu nhiên cố định theo số chứng nhận) ---------- */
+  var FOOT = 144;                                            // chân phiếu = banner (2400×320 → 1080×144)
   function rngFrom(str) {
     var h = 1779033703 ^ str.length;
     for (var i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19); }
@@ -103,7 +105,7 @@
     ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
   }
   function drawMai(ctx, W, H, seed, top) {
-    var rnd = rngFrom(seed || 'mai'), bottom = H - 118, STEP = 190, x, y, n = 0;
+    var rnd = rngFrom(seed || 'mai'), bottom = H - FOOT, STEP = 190, x, y, n = 0;
     ctx.save(); ctx.beginPath(); ctx.rect(0, top, W, bottom - top); ctx.clip();
     for (y = top + 10; y < bottom + STEP; y += STEP) {
       for (x = -30 + (n % 2) * STEP / 2; x < W + STEP; x += STEP) {
@@ -125,8 +127,8 @@
       ? Promise.all([document.fonts.load('900 60px Roboto'), document.fonts.load('700 30px Roboto'), document.fonts.load('400 30px Roboto')]).catch(function () {})
       : Promise.resolve();
 
-    return Promise.all([loadImg('assets/img/hero.webp'), loadImg('assets/logo/viettel-logo-white.svg'), fontsReady]).then(function (r) {
-      var photo = r[0], logo = r[1];
+    return Promise.all([loadImg('assets/img/hero.webp'), loadImg('assets/logo/viettel-logo-white.svg'), loadImg('assets/img/banner.webp'), fontsReady]).then(function (r) {
+      var photo = r[0], logo = r[1], banner = r[2];
 
       ctx.clearRect(0, 0, W, H);
       paintBackground(ctx, W, H);
@@ -188,19 +190,15 @@
       ctx.fillText(fmtTime(data.ts) + ' · ' + fmtDate(data.ts), PAD, 1316);
       ctx.fillText(data.serial, colX, 1316);
 
-      // chân trang
-      ctx.fillStyle = '#000000'; ctx.fillRect(0, H - 118, W, 118);
-      ctx.fillStyle = '#EE0033'; ctx.fillRect(PAD, H - 118 + 59 - 2, 44, 4);
-      ctx.fillStyle = '#FFFFFF'; ctx.font = '700 26px Roboto, Arial, sans-serif'; spaced(ctx, 6); ctx.textBaseline = 'middle';
-      ctx.fillText('VIETTEL – THEO CÁCH CỦA BẠN', PAD + 72, H - 118 + 59);
-      ctx.textBaseline = 'alphabetic'; spaced(ctx, 0);
+      // chân phiếu: banner thay cho dòng chữ Viettel cũ
+      ctx.drawImage(banner, 0, H - FOOT, W, FOOT);
     });
   }
 
   /* ---------- hiển thị ---------- */
   function showCert(data, scroll) {
     current = data;
-    panel.classList.add('has-cert'); startPetals();
+    section.classList.add('has-cert'); startPetals();
     hello.textContent = 'Chào mừng ' + data.name + ' đến với gian hàng REPLY 2006';
     form.hidden = true; result.hidden = false; certError.hidden = true;
     draw(data).then(function () {
@@ -208,7 +206,7 @@
       if (scroll) result.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }).catch(function () { showError('Không tải được ảnh nền cho chứng nhận. Vui lòng thử lại.'); });
   }
-  function showForm() { panel.classList.remove('has-cert'); result.hidden = true; form.hidden = false; input.value = ''; input.focus(); }
+  function showForm() { section.classList.remove('has-cert'); result.hidden = true; form.hidden = false; input.value = ''; input.focus(); }
   function showError(msg) { certError.textContent = msg; certError.hidden = false; }
 
   function toBlob() {

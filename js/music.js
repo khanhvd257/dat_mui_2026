@@ -1,36 +1,45 @@
-/* Nhạc nền từ assets/img/nhac.mp3 – tự phát khi vào trang và phát xuyên suốt.
-
-   Vì sao trước đây "thoát ra vào lại là mất nhạc": sau khi phát được, bộ lắng nghe lượt chạm bị gỡ;
-   khi quay lại, trình duyệt (nhất là điện thoại) chặn phát tự động nên không còn gì để bật nhạc lên.
-   Cách làm hiện tại:
-   - Luôn thử tự phát khi vào trang (có tiếng → nếu bị chặn thì phát im lặng).
-   - Bộ lắng nghe lượt chạm LUÔN được giữ: bất cứ lúc nào nhạc đang tắt tiếng/dừng mà khách chạm vào trang
-     (và khách không chủ động tắt) → nhạc bật lại ngay.
-   - Không tự dừng nhạc khi chuyển tab; khi quay lại tab/trang (kể cả từ bộ nhớ đệm "back") sẽ phát tiếp.
-   - Lưu vị trí đang phát: tải lại trang hoặc vào lại thì nhạc chạy tiếp từ đoạn đang nghe.
-   - Nút ở góc màn hình để tắt/bật; lựa chọn "tắt" của khách được nhớ trên thiết bị. */
+/* Nhạc nền từ assets/img/dat_mui_audio.mp3 – tự phát khi vào trang.
+   - Mỗi lần tải trang (vào mới, tải lại F5, mở lại tab) nhạc bắt đầu lại từ đầu; không lưu vị trí hay lựa chọn tắt qua các lần tải.
+   - Mỗi lần nhạc bắt đầu nghe được âm lượng tăng dần từ 0 lên tối đa trong ~1,5 giây.
+   - Trong cùng một lần mở trang: không tự dừng khi chuyển tab; bộ lắng nghe lượt chạm luôn được giữ để bật lại nhạc;
+     nếu khách chủ động bấm tắt thì nhạc tắt cho đến khi bấm bật lại.
+   - Trình duyệt chặn phát có tiếng khi chưa có thao tác: thử có tiếng → nếu bị chặn thì phát im lặng → bật tiếng ở lần chạm đầu tiên. */
 (function () {
   'use strict';
 
-  var SRC = 'assets/img/nhac.mp3', KEY = 'viettel-datmui-music', TKEY = KEY + '-pos';
+  var SRC = 'assets/img/dat_mui_audio.mp3';
+  var VOL_MAX = 1, RAMP_MS = 1500;
   var RESUME_WINDOW = 12 * 3600 * 1000;                      // chỉ nối tiếp vị trí cũ nếu cách chưa quá 12 giờ
   var btn = document.getElementById('music-btn');
   if (!btn) return;
   var label = btn.querySelector('.music-btn__label');
 
   var audio = new Audio();
-  audio.src = SRC; audio.loop = true; audio.preload = 'auto'; audio.volume = 0.55;
+  audio.src = SRC; audio.loop = true; audio.preload = 'auto'; audio.volume = 0;   // luôn bắt đầu từ im lặng rồi tăng dần
 
-  function store(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { /* bỏ qua */ } }
-  function read(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
-
-  var wantOn = read(KEY) !== 'off';                          // khách chưa từng tắt thì mặc định bật
+  try { ['viettel-datmui-music', 'viettel-datmui-music-pos', 'viettel-datmui-music-pos-v2'].forEach(function (k) { localStorage.removeItem(k); }); } catch (e) { /* dọn dữ liệu cũ */ }
+  var wantOn = true;                                         // mỗi lần tải trang đều bắt đầu ở trạng thái bật
   var needsTap = false;                                      // true: trình duyệt đang chặn, chờ lượt chạm để có tiếng
   var GESTURES = ['pointerdown', 'touchstart', 'touchend', 'keydown', 'click'];
 
   /* ---------- giao diện nút ---------- */
+  var wasAudible = false, rampRaf = 0, rampMs = RAMP_MS;
+  function ramp(ms) {                                        // tăng âm lượng 0 → tối đa (ease in-out)
+    cancelAnimationFrame(rampRaf);
+    var t0 = performance.now();
+    audio.volume = 0;
+    (function step(now) {
+      var k = Math.min(1, (now - t0) / ms);
+      audio.volume = VOL_MAX * k * k * (3 - 2 * k);
+      if (k < 1) rampRaf = requestAnimationFrame(step);
+    })(t0);
+  }
+
   function ui() {
     var playing = !audio.paused && !audio.muted;
+    if (playing && !wasAudible) ramp(rampMs);                // vừa bắt đầu nghe được → tăng dần
+    if (!playing && audio.volume !== 0) { cancelAnimationFrame(rampRaf); audio.volume = 0; }   // chuẩn bị cho lần sau
+    wasAudible = playing;
     var waiting = wantOn && needsTap && !playing;
     btn.classList.toggle('is-playing', playing);
     btn.classList.toggle('is-waiting', waiting);
@@ -38,25 +47,6 @@
     btn.setAttribute('aria-label', playing ? 'Tắt nhạc nền' : (waiting ? 'Chạm để bật tiếng nhạc nền' : 'Bật nhạc nền'));
     label.textContent = waiting ? 'Chạm để nghe nhạc' : 'Nhạc';
   }
-
-  /* ---------- nối tiếp vị trí đang nghe ---------- */
-  var savedAt = 0;
-  function savePos(force) {
-    var now = Date.now();
-    if (!force && now - savedAt < 1500) return;
-    savedAt = now;
-    if (audio.currentTime > 0) store(TKEY, JSON.stringify({ t: audio.currentTime, at: now }));
-  }
-  function restorePos() {
-    try {
-      var o = JSON.parse(read(TKEY));
-      if (o && o.t > 0 && Date.now() - o.at < RESUME_WINDOW && (!audio.duration || o.t < audio.duration - 2)) audio.currentTime = o.t;
-    } catch (e) { /* bỏ qua */ }
-  }
-  var restored = false;
-  audio.addEventListener('loadedmetadata', function () { if (!restored) { restored = true; restorePos(); } });
-  audio.addEventListener('timeupdate', function () { savePos(false); });
-  window.addEventListener('pagehide', function () { savePos(true); });
 
   /* ---------- phát / bật tiếng ---------- */
   function tryPlay() {
@@ -91,8 +81,8 @@
   GESTURES.forEach(function (t) { document.addEventListener(t, onGesture, true); });   // luôn giữ, không gỡ
 
   btn.addEventListener('click', function () {
-    if (audio.paused || audio.muted) { wantOn = true; store(KEY, 'on'); unlock(); }
-    else { wantOn = false; store(KEY, 'off'); audio.pause(); ui(); }
+    if (audio.paused || audio.muted) { wantOn = true; unlock(); }
+    else { wantOn = false; audio.pause(); ui(); }
   });
 
   audio.addEventListener('play', ui);
@@ -106,7 +96,7 @@
     else if (audio.muted) { needsTap = true; ui(); }
   }
   document.addEventListener('visibilitychange', function () {
-    if (document.hidden) savePos(true); else resume();
+    if (!document.hidden) resume();
   });
   window.addEventListener('pageshow', function (e) { if (e.persisted) resume(); });   // quay lại bằng nút Back (bộ nhớ đệm)
   window.addEventListener('focus', resume);
@@ -114,23 +104,14 @@
   /* ---------- thông tin phát nhạc cho màn hình khóa / thông báo của hệ điều hành ---------- */
   if ('mediaSession' in navigator && window.MediaMetadata) {
     navigator.mediaSession.metadata = new MediaMetadata({ title: 'Sóng về Đất Mũi, Tết về muôn nhà', artist: 'Viettel Cà Mau · REPLY 2006' });
-    navigator.mediaSession.setActionHandler('play', function () { wantOn = true; store(KEY, 'on'); unlock(); });
-    navigator.mediaSession.setActionHandler('pause', function () { wantOn = false; store(KEY, 'off'); audio.pause(); });
+    navigator.mediaSession.setActionHandler('play', function () { wantOn = true; unlock(); });
+    navigator.mediaSession.setActionHandler('pause', function () { wantOn = false; audio.pause(); });
   }
 
-  // bật nhạc có tiếng và tăng âm lượng dần (dùng khi mở màn rèm)
+  // bật nhạc có tiếng, tăng âm lượng dần trong ms mili-giây (dùng khi mở màn rèm)
   function startWithFade(ms) {
-    if (!wantOn) return;
-    var target = 0.55, fade = audio.paused || audio.muted;
-    if (fade) audio.volume = 0;
+    rampMs = ms || RAMP_MS;
     unlock();
-    if (!fade) return;
-    var t0 = performance.now();
-    (function step(now) {
-      var k = Math.min(1, (now - t0) / ms);
-      audio.volume = target * k;
-      if (k < 1) requestAnimationFrame(step);
-    })(t0);
   }
 
   window.datMuiMusic = { start: unlock, startWithFade: startWithFade, audio: audio };
