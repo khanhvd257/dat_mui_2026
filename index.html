@@ -20,8 +20,28 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap">
   <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/curtain.css">
+  <script>
+    /* Lần đầu vào trang (hoặc ?curtain=1) thì hiện màn rèm; đặt cờ sớm để không bị chớp nội dung */
+    try { if (!localStorage.getItem('viettel-datmui-curtain-seen') || /[?&]curtain=1/.test(location.search)) document.documentElement.classList.add('has-curtain'); }
+    catch (e) { document.documentElement.classList.add('has-curtain'); }
+  </script>
 </head>
 <body>
+
+  <!-- MÀN RÈM MỞ ĐẦU -->
+  <div class="curtain" id="curtain">
+    <div class="curtain__panel curtain__panel--l"><div class="curtain__fabric"></div></div>
+    <div class="curtain__panel curtain__panel--r"><div class="curtain__fabric"></div></div>
+    <div class="curtain__light"></div>
+    <div class="curtain__valance"><img src="assets/logo/viettel-logo-white.svg" alt="Viettel" width="800" height="170"></div>
+    <button type="button" class="curtain__open" aria-label="Chạm để mở màn và vào trang">
+      <span class="curtain__ring" aria-hidden="true"></span>
+      <span class="curtain__sub">Gian hàng REPLY 2006</span>
+      <span class="curtain__label">Chạm để mở màn</span>
+    </button>
+    <button type="button" class="curtain__skip">Bỏ qua ›</button>
+  </div>
 
   <!-- HEADER -->
   <header class="site-header" id="header">
@@ -66,7 +86,7 @@
 
       <div class="hero__content">
         <p class="eyebrow eyebrow--light">VIETTEL CÀ MAU <span>|</span> ĐẤT MŨI</p>
-        <h1 id="hero-title">Nơi tận cùng Tổ quốc<br><em>– cuộc gọi chúc Tết đầu tiên</em></h1>
+        <h1 id="hero-title" aria-label="Sóng về Đất Mũi, Tết về muôn nhà"><span class="hl hl--l" aria-hidden="true">Sóng về Đất Mũi</span><span class="hl hl--r" aria-hidden="true">Tết về muôn nhà</span></h1>
         <p class="hero__sub">Check-in để nhận chứng nhận số khi đến với gian hàng REPLY 2006.</p>
         <div class="hero__actions">
           <a class="btn" href="#checkin">Check-in nhận chứng nhận <span aria-hidden="true">↓</span></a>
@@ -277,5 +297,6 @@
   <script src="js/main.js"></script>
   <script src="js/checkin.js"></script>
   <script src="js/music.js"></script>
+  <script src="js/curtain.js"></script>
 </body>
 </html>

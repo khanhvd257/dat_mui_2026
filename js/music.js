@@ -85,7 +85,7 @@
   }
 
   function onGesture(e) {
-    if (e.target && e.target.closest && e.target.closest('.music-btn')) return;   // nút nhạc tự xử lý
+    if (e.target && e.target.closest && e.target.closest('.music-btn, .curtain')) return;   // nút nhạc và màn rèm tự xử lý
     if (wantOn && (audio.paused || audio.muted)) unlock();
   }
   GESTURES.forEach(function (t) { document.addEventListener(t, onGesture, true); });   // luôn giữ, không gỡ
@@ -118,7 +118,22 @@
     navigator.mediaSession.setActionHandler('pause', function () { wantOn = false; store(KEY, 'off'); audio.pause(); });
   }
 
-  window.datMuiMusic = { start: unlock, audio: audio };
+  // bật nhạc có tiếng và tăng âm lượng dần (dùng khi mở màn rèm)
+  function startWithFade(ms) {
+    if (!wantOn) return;
+    var target = 0.55, fade = audio.paused || audio.muted;
+    if (fade) audio.volume = 0;
+    unlock();
+    if (!fade) return;
+    var t0 = performance.now();
+    (function step(now) {
+      var k = Math.min(1, (now - t0) / ms);
+      audio.volume = target * k;
+      if (k < 1) requestAnimationFrame(step);
+    })(t0);
+  }
+
+  window.datMuiMusic = { start: unlock, startWithFade: startWithFade, audio: audio };
   autoplay();
   ui();
 })();

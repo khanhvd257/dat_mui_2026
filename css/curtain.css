@@ -1,0 +1,130 @@
+/* ==========================================================
+   MÀN RÈM MỞ ĐẦU (kiểu rạp hát) – chỉ hiện ở lần đầu vào trang
+   Màu: đỏ Viettel #EE0033, đen, trắng.
+
+   Tối ưu độ mượt: mọi chuyển động chỉ dùng transform / opacity (chạy trên GPU, không vẽ lại),
+   không dùng filter, blur, scale lên lớp có nền gradient, hay animate background.
+   Mỗi lớp lớn được tách riêng (will-change) và chỉ vẽ một lần.
+   ========================================================== */
+.curtain { --fold: clamp(64px, 9vw, 112px); display: none; position: fixed; inset: 0; z-index: 200; overflow: hidden; touch-action: none; contain: layout paint; }
+.has-curtain .curtain { display: block; }
+html.curtain-lock, html.curtain-lock body { overflow: hidden; }
+
+/* ---- hai cánh rèm: panel (di chuyển) > fabric (nền nếp gấp, đung đưa nhẹ) ---- */
+.curtain__panel { position: absolute; top: 0; bottom: 0; width: 50.6%; will-change: transform; backface-visibility: hidden; transform: translate3d(0, 0, 0); }
+.curtain__panel--l { left: 0;  transform-origin: 0 0; }
+.curtain__panel--r { right: 0; transform-origin: 100% 0; }
+.curtain__fabric {
+  position: absolute; inset: 0; will-change: transform; backface-visibility: hidden;
+  background-color: #EE0033;
+  background-image:
+    linear-gradient(180deg, rgba(0,0,0,.42) 0, rgba(0,0,0,0) 24%, rgba(0,0,0,0) 72%, rgba(0,0,0,.45) 100%),
+    repeating-linear-gradient(90deg,
+      rgba(0,0,0,.36) 0,
+      rgba(0,0,0,.06) calc(var(--fold) * .32),
+      rgba(255,255,255,.15) calc(var(--fold) * .6),
+      rgba(0,0,0,.32) var(--fold));
+}
+.curtain__fabric::after { content: ""; position: absolute; top: 0; bottom: 0; width: 7%; pointer-events: none; }
+.curtain__panel--l .curtain__fabric::after { right: 0; background: linear-gradient(90deg, rgba(0,0,0,0), rgba(0,0,0,.5)); }
+.curtain__panel--r .curtain__fabric::after { left: 0;  background: linear-gradient(270deg, rgba(0,0,0,0), rgba(0,0,0,.5)); }
+.curtain:not(.is-open) .curtain__panel--l .curtain__fabric { animation: sway 6s ease-in-out infinite alternate; }
+.curtain:not(.is-open) .curtain__panel--r .curtain__fabric { animation: sway 6.8s ease-in-out infinite alternate-reverse; }
+@keyframes sway { from { transform: translate3d(0, 0, 0) skewX(-.3deg); } to { transform: translate3d(0, 0, 0) skewX(.3deg); } }
+
+/* ---- vệt sáng sân khấu ---- */
+.curtain__light { position: absolute; inset: 0; pointer-events: none; will-change: opacity; transition: opacity 1.2s ease-out;
+  background: radial-gradient(ellipse 55% 60% at 50% 46%, rgba(255,255,255,.28), rgba(255,255,255,0) 70%); }
+
+/* ---- diềm rèm phía trên + logo ---- */
+.curtain__valance {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 2; height: clamp(64px, 13vh, 118px);
+  display: flex; align-items: center; justify-content: center; background: #000; border-bottom: 3px solid var(--red);
+  will-change: transform; backface-visibility: hidden;
+}
+.curtain__valance::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 22px; pointer-events: none;
+  background: radial-gradient(circle at 28px 0, #000 27px, rgba(0,0,0,0) 28px) 0 0 / 56px 22px repeat-x;
+}
+.curtain__valance img { width: clamp(110px, 18vw, 180px); height: auto; }
+
+/* ---- nút chạm mở màn (phủ toàn màn hình) ---- */
+.curtain__open {
+  position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 14px;
+  padding: 0 20px calc(clamp(56px, 13vh, 130px) + env(safe-area-inset-bottom)); border: 0; background: transparent; color: #fff; cursor: pointer;
+  transition: opacity .35s ease-out;
+}
+.curtain__open:focus-visible { outline: 3px solid #fff; outline-offset: -10px; }
+.curtain__sub { font: 500 .72rem/1 var(--font-title); letter-spacing: .26em; text-transform: uppercase; opacity: .85; }
+.curtain__label { font: 900 clamp(.95rem, 2.2vw, 1.25rem)/1 var(--font-title); letter-spacing: .24em; text-transform: uppercase; animation: hint 2.2s ease-in-out infinite; }
+.curtain__ring { position: relative; width: 44px; height: 44px; border-radius: 50%; border: 2px solid #fff; }
+.curtain__ring::before { content: ""; position: absolute; inset: 12px; border-radius: 50%; background: #fff; }
+.curtain__ring::after { content: ""; position: absolute; inset: -2px; border-radius: 50%; border: 2px solid #fff; animation: ring 2.2s var(--ease) infinite; }
+@keyframes hint { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+@keyframes ring { 0% { transform: scale(1); opacity: .9; } 100% { transform: scale(2.1); opacity: 0; } }
+
+.curtain__skip {
+  position: absolute; top: 0; right: 0; z-index: 4; height: clamp(64px, 13vh, 118px); padding: 0 clamp(16px, 4vw, 40px);
+  border: 0; background: transparent; color: rgba(255,255,255,.8); font: 700 .7rem/1 var(--font-title); letter-spacing: .16em; text-transform: uppercase;
+  transition: opacity .25s;
+}
+.curtain__skip:hover { color: #fff; }
+
+/* ==========================================================
+   KHI MỞ MÀN – 2 giây, một đường cong duy nhất cho cả hai cánh
+   Cánh rèm trượt ra khỏi màn hình (translate3d) và hơi nghiêng khi bị kéo, rồi thẳng lại.
+   ========================================================== */
+.curtain { --open: 2s; --ease-open: cubic-bezier(.55, .05, .25, 1); }
+.curtain.is-fast { --open: .7s; }
+.curtain.is-open .curtain__panel--l { animation: pull-l var(--open) var(--ease-open) forwards; }
+.curtain.is-open .curtain__panel--r { animation: pull-r var(--open) var(--ease-open) forwards; }
+@keyframes pull-l {
+  0%   { transform: translate3d(0, 0, 0) skewX(0); }
+  45%  { transform: translate3d(-34%, 0, 0) skewX(2.2deg); }
+  100% { transform: translate3d(-104%, 0, 0) skewX(0); }
+}
+@keyframes pull-r {
+  0%   { transform: translate3d(0, 0, 0) skewX(0); }
+  45%  { transform: translate3d(34%, 0, 0) skewX(2.2deg); }
+  100% { transform: translate3d(104%, 0, 0) skewX(0); }
+}
+.curtain.is-open .curtain__valance { transform: translate3d(0, -140%, 0); transition: transform calc(var(--open) * .6) calc(var(--open) * .35) var(--ease-open); }
+.curtain.is-open .curtain__light { opacity: 0; }
+.curtain.is-open .curtain__open { opacity: 0; pointer-events: none; }
+.curtain.is-open .curtain__skip { opacity: 0; pointer-events: none; }
+
+/* ==========================================================
+   SAU KHI MỞ: ảnh nền thu phóng + chữ chạy hai bên
+   ========================================================== */
+/* ảnh nền: chỉ scale (transform); độ tối làm bằng lớp phủ đen đổi opacity thay cho filter */
+.has-curtain .hero__media img { transform: scale(1.16); will-change: transform; }
+html.hero-play .hero__media img { will-change: transform; transform: scale(1); transition: transform 7s cubic-bezier(.2, .55, .2, 1); }
+.hero::after { content: ""; position: absolute; inset: 0; z-index: 1; background: #000; opacity: 0; pointer-events: none; will-change: opacity; }
+.has-curtain .hero::after { opacity: .5; }
+html.hero-play .hero::after { opacity: 0; transition: opacity 2.6s ease-out; }
+
+.has-curtain .hero__tower-wrap { opacity: 0; }
+html.hero-play .hero__tower-wrap { opacity: 1; transition: opacity 2s 1.1s ease-out; }
+.has-curtain:not(.hero-play) .hero__content > * { animation: none; opacity: 0; }
+.has-curtain:not(.hero-play) .hero__content::before { transform: scaleX(0); }
+.hero__content::before { transform-origin: left; transition: transform 1s calc(var(--hero-delay, 0s) + .2s) var(--ease); }
+html.hero-play { --hero-delay: 1.1s; }
+
+/* chữ: dòng 1 bay từ trái, dòng 2 bay từ phải, từng ký tự – chỉ opacity + translate3d (không blur) */
+.hl { display: block; }
+.hl--r { font-weight: 300; }
+.hl-w { display: inline-block; white-space: nowrap; }
+.is-split .hl-ch { display: inline-block; opacity: 0; }
+html:not(.has-curtain) .is-split .hl--l .hl-ch, html.hero-play .is-split .hl--l .hl-ch { animation: ch-l 1s var(--ease) both; animation-delay: calc(var(--hero-delay, 0s) + .3s + var(--i) * 40ms); }
+html:not(.has-curtain) .is-split .hl--r .hl-ch, html.hero-play .is-split .hl--r .hl-ch { animation: ch-r 1s var(--ease) both; animation-delay: calc(var(--hero-delay, 0s) + .75s + var(--i) * 40ms); }
+@keyframes ch-l { from { opacity: 0; transform: translate3d(-9vw, 0, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+@keyframes ch-r { from { opacity: 0; transform: translate3d(9vw, 0, 0); }  to { opacity: 1; transform: translate3d(0, 0, 0); } }
+
+/* ---- giảm chuyển động: chỉ mờ dần ---- */
+@media (prefers-reduced-motion: reduce) {
+  .curtain:not(.is-open) .curtain__fabric { animation: none; }
+  .curtain.is-open .curtain__panel--l, .curtain.is-open .curtain__panel--r { animation: none; opacity: 0; transition: opacity .5s; }
+  .curtain.is-open .curtain__valance { transform: none; opacity: 0; transition: opacity .5s; }
+  .has-curtain .hero__media img { transform: none; }
+  .is-split .hl-ch { opacity: 1 !important; animation: none !important; transform: none !important; }
+}

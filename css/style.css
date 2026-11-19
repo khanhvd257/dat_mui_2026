@@ -100,10 +100,10 @@ p { margin: 0; }
 .hero__note { position: absolute; z-index: 3; left: var(--gutter); bottom: 18px; font-size: .68rem; letter-spacing: .04em; color: rgba(255,255,255,.7); max-width: 70ch; }
 
 .hero__content > * { opacity: 0; transform: translateY(24px); animation: rise 1s var(--ease) forwards; }
-.hero__content > :nth-child(1) { animation-delay: .15s; }
-.hero__content > :nth-child(2) { animation-delay: .3s; }
-.hero__content > :nth-child(3) { animation-delay: .5s; }
-.hero__content > :nth-child(4) { animation-delay: .7s; }
+.hero__content > :nth-child(1) { animation-delay: calc(var(--hero-delay, 0s) + .15s); }
+.hero__content > h1 { opacity: 1; transform: none; animation: none; }
+.hero__content > :nth-child(3) { animation-delay: calc(var(--hero-delay, 0s) + 2s); }
+.hero__content > :nth-child(4) { animation-delay: calc(var(--hero-delay, 0s) + 2.3s); }
 @keyframes rise { to { opacity: 1; transform: none; } }
 
 /* ---------- 02 MAP ---------- */
