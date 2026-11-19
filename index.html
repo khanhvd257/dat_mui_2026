@@ -136,6 +136,7 @@
             </div>
             <p class="form__error" id="cert-error" role="alert" hidden></p>
           </div>
+          <div class="petals" aria-hidden="true"></div>
         </div>
       </div>
     </section>
@@ -264,10 +265,17 @@
     <button type="button" class="lightbox__nav lightbox__nav--next" aria-label="Ảnh sau">›</button>
   </div>
 
+  <!-- NHẠC NỀN -->
+  <button type="button" class="music-btn" id="music-btn" aria-pressed="false" aria-label="Bật nhạc nền">
+    <span class="music-btn__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    <span class="music-btn__label">Nhạc</span>
+  </button>
+
   <script src="assets/vendor/leaflet/leaflet.js"></script>
   <script src="js/geodata.js"></script>
   <script src="js/map.js"></script>
   <script src="js/main.js"></script>
   <script src="js/checkin.js"></script>
+  <script src="js/music.js"></script>
 </body>
 </html>
