@@ -115,8 +115,26 @@ p { margin: 0; }
 
 /* hero: một cột sóng chính */
 .hero__towers { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
-.hero__towers .tw { position: absolute; bottom: 0; color: #fff; will-change: transform; filter: drop-shadow(0 0 14px rgba(0,0,0,.3)); }
+.hero__towers .tw { position: absolute; bottom: 0; color: #fff; will-change: transform; }
+.hero__towers .tw svg { filter: drop-shadow(0 0 14px rgba(0,0,0,.3)); }
 .tw--main { right: clamp(8%, 16vw, 22%); --h: 84vh; --sw: 1.5px; }
+
+/* Hero: sóng phủ rộng – 4 vòng lan ra từ đỉnh cột, mở rộng gần bằng cả khung hình để thể hiện vùng phủ sóng mạnh */
+.tw--main { --wave-max: 9; }
+.tw--main::before, .tw--main::after { display: none; }
+.tw__wave {
+  position: absolute; left: 50%; top: 6%; width: 70%; aspect-ratio: 1; margin: -35% 0 0 -35%; border-radius: 50%; pointer-events: none;
+  border: 1px solid rgba(238,0,51,.85);
+  background: radial-gradient(circle, rgba(238,0,51,0) 55%, rgba(238,0,51,.14) 100%);
+  box-shadow: 0 0 14px rgba(238,0,51,.28), inset 0 0 14px rgba(238,0,51,.14);
+  opacity: 0; will-change: transform, opacity;
+  animation: tw-wave 6s cubic-bezier(.15, .5, .3, 1) infinite; animation-delay: calc(var(--i) * 1.5s);
+}
+@keyframes tw-wave {
+  0%   { transform: scale(.3); opacity: .95; }
+  65%  { opacity: .4; }
+  100% { transform: scale(var(--wave-max, 12)); opacity: 0; }
+}
 
 /* đường chân trời cột sóng (ngăn cách section) */
 .skyline { display: flex; align-items: flex-end; justify-content: space-between; height: 250px; margin-bottom: clamp(24px, 4vw, 48px); border-bottom: 1px solid rgba(68,73,77,.22); }
@@ -200,7 +218,7 @@ p { margin: 0; }
 .story__figure { grid-column: 9 / -1; margin: 0; position: sticky; top: calc(var(--header-h) + 24px); }
 .story__figure .zoom-frame { aspect-ratio: 4 / 5; }
 .story__figure .zoom-frame img { object-position: 50% 40%; }
-.story__figure figcaption { margin-top: 12px; font-size: .72rem; color: #7b7f83; }
+.story__figure figcaption { margin-top: 12px; font-size: .72rem; color: #7b7f83; text-align: center; }
 
 .timeline { list-style: none; margin: clamp(36px, 5vw, 64px) 0 0; padding: 0 0 0 clamp(22px, 3vw, 40px); border-left: 2px solid var(--gray-100); }
 .timeline__item { position: relative; padding-bottom: clamp(36px, 5vw, 60px); }
@@ -360,7 +378,7 @@ p { margin: 0; }
   .site-header__nav { gap: 14px; }
   .site-header__nav a { font-size: .68rem; letter-spacing: .08em; }
   .hero__content { bottom: 64px; }
-  .tw--main { right: 3%; --h: 60vh; opacity: .4; }
+  .tw--main { right: 3%; --h: 60vh; opacity: .55; --wave-max: 7; }
   .skyline { height: 150px; }
   .skyline .tw:nth-child(n+8) { display: none; }
   .hero__actions .btn { width: 100%; justify-content: space-between; }
