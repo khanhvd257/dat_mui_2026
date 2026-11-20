@@ -1,94 +1,135 @@
-/* Dải tên khách đã check-in chạy ở nền khu Check-in – hiện ngay khi vào trang, không cần nhập tên.
-   Lấy từ /api/checkins (tự cập nhật). Tên càng nhiều thì càng chia ra nhiều dòng (tối đa 8) để mỗi dòng ngắn, chạy nhanh vòng.
-   Không có máy chủ (mở file tĩnh): chỉ hiện các tên được thêm ngay trong phiên này. */
+/* Tên khách đã check-in chạy ở nền khu Check-in – hiện ngay khi vào trang, không cần nhập tên.
+   Mỗi dòng chạy MỘT tên, chạy hết thì lấy tên kế tiếp. Tên được xáo ngẫu nhiên sau khi tải về
+   (không theo thứ tự check-in); tên mới check-in được ưu tiên hiện sớm.
+   Lấy từ /api/checkins (tự cập nhật). Không có máy chủ: chỉ hiện tên vừa nhập trong phiên. */
 (function () {
   'use strict';
   var wall = document.querySelector('.checkin__wall');
   var section = document.getElementById('checkin');
   if (!wall || !section) return;
 
-  var MIN_ROWS = 3, MAX_ROWS = 8, PER_ROW = 6;      // mục tiêu ~6 tên / dòng
-  var SPEED = 60, MAX_CYCLE = 70;                   // px/giây; một vòng không quá 70 giây
-  var POLL_MS = 20000;
-  var names = [], local = [], sig = '', inView = true, lastFetch = 0;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var POLL_MS = 20000, MIN_ROWS = 3, MAX_ROWS = 9;
+  var all = [], queue = [], fresh = [], known = Object.create(null), local = [];
+  var rows = [], started = false, inView = true, lastFetch = 0, builtW = 0;
 
-  function signature() { return names.length + '|' + names.slice(0, 3).join('/') + '|' + names[names.length - 1]; }
-  function rowCount(n) { return Math.max(MIN_ROWS, Math.min(MAX_ROWS, Math.ceil(n / PER_ROW))); }
+  function shuffle(a) {
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  function shown() { var o = Object.create(null); rows.forEach(function (r) { if (r.name) o[r.name] = 1; }); return o; }
 
-  function makeGroup(list, hidden) {
-    var grp = document.createElement('span'); grp.className = 'wall__group';
-    if (hidden) grp.setAttribute('aria-hidden', 'true');
-    list.forEach(function (n) {
-      var b = document.createElement('b'); b.textContent = n; grp.appendChild(b);
-      var d = document.createElement('i'); d.setAttribute('aria-hidden', 'true'); grp.appendChild(d);
-    });
-    return grp;
+  // chọn tên kế tiếp: ưu tiên tên mới, rồi tên ngẫu nhiên chưa lặp trong vòng xáo, tránh trùng tên đang hiện
+  function nextName() {
+    if (!all.length) return null;
+    var now = shown(), n, skipped = [];
+    while (fresh.length) { n = fresh.shift(); if (!now[n]) return n; }
+    var pick = null;
+    for (var tries = 0; tries < all.length + 2 && pick === null; tries++) {
+      if (!queue.length) queue = shuffle(all.slice());
+      n = queue.pop();
+      if (!now[n] || all.length <= rows.length) pick = n; else skipped.push(n);
+    }
+    if (skipped.length) queue = skipped.concat(queue);   // trả lại, dùng sau
+    return pick === null ? all[Math.floor(Math.random() * all.length)] : pick;
   }
 
-  function render() {
-    var s = signature();
-    if (s === sig) return;
-    sig = s;
-    wall.textContent = '';
-    if (!names.length) return;
+  function baseSpeed() { return window.innerWidth >= 900 ? 210 : 150; }   // px/giây (nhanh)
 
-    var rows = rowCount(names.length);
-    wall.className = 'checkin__wall wall--d' + (rows <= 3 ? 1 : rows <= 5 ? 2 : 3);
-
-    // chia vòng tròn: tên mới nhất rải đều ở đầu các dòng
-    var buckets = [];
-    for (var r = 0; r < rows; r++) buckets.push([]);
-    names.forEach(function (n, i) { buckets[i % rows].push(n); });
-
-    var need = Math.max(window.innerWidth, 900) * 1.05;   // mỗi nhóm phải dài hơn khung nhìn để vòng lặp không hở
-    buckets.forEach(function (list, r) {
-      if (!list.length) list = names.slice(0, 1);
-      var row = document.createElement('div'); row.className = 'wall__row' + (r % 2 ? ' wall__row--rev' : '');
-      var track = document.createElement('div'); track.className = 'wall__track';
-      var g1 = makeGroup(list, false); track.appendChild(g1);
-      row.appendChild(track); wall.appendChild(row);
-
-      // lặp danh sách cho tới khi đủ dài
-      var guard = 0, items = list;
-      while (g1.getBoundingClientRect().width < need && guard++ < 12) {
-        items = items.concat(list);
-        track.replaceChild(makeGroup(items, false), g1); g1 = track.firstChild;
-      }
-      var w = g1.getBoundingClientRect().width || need;
-      track.appendChild(makeGroup(items, true));          // bản thứ hai nối liền
-      var dur = Math.min(w / SPEED, MAX_CYCLE);
-      track.style.animationDuration = dur.toFixed(1) + 's';
-      track.style.animationDelay = (-Math.random() * dur).toFixed(1) + 's';   // các dòng lệch pha nhau
-    });
+  function launch(row, initial) {
+    var n = nextName();
+    row.el.textContent = ''; row.name = null; row.anim = null;
+    if (!n) return;
+    var b = document.createElement('b');
+    b.textContent = n; if (Math.random() < .5) b.className = 'is-fill';
+    row.el.appendChild(b); row.name = n;
+    var vw = row.el.clientWidth, w = b.offsetWidth, pad = 24;
+    var from = row.dir > 0 ? -w - pad : vw + pad, to = row.dir > 0 ? vw + pad : -w - pad;
+    if (reduce) {                                       // giảm chuyển động: đứng yên, đổi tên sau mỗi vài giây
+      b.style.transform = 'translate3d(' + Math.max(0, Math.random() * (vw - w)).toFixed(0) + 'px,0,0)';
+      row.timer = setTimeout(function () { launch(row, false); }, 5000 + Math.random() * 4000);
+      return;
+    }
+    var dur = (vw + w + pad * 2) / (baseSpeed() * (0.75 + Math.random() * 0.5)) * 1000;
+    var a = b.animate(
+      [{ transform: 'translate3d(' + from + 'px,0,0)' }, { transform: 'translate3d(' + to + 'px,0,0)' }],
+      { duration: dur, easing: 'linear', fill: 'both' });
+    if (initial) a.currentTime = Math.random() * dur * 0.85;      // các dòng bắt đầu ở vị trí khác nhau
+    a.onfinish = function () { launch(row, false); };
+    row.anim = a;
+    if (!inView) a.pause();
   }
 
-  function setNames(arr) { names = arr; render(); }
+  function rowTarget() {
+    var probe = document.createElement('div'); probe.className = 'wall__row'; probe.style.visibility = 'hidden';
+    wall.appendChild(probe);
+    var h = probe.offsetHeight || 80; wall.removeChild(probe);
+    var n = Math.floor(wall.clientHeight / (h * 1.45));
+    return Math.max(MIN_ROWS, Math.min(MAX_ROWS, n, Math.max(MIN_ROWS, all.length)));
+  }
+
+  function clearRows() { rows.forEach(function (r) { if (r.anim) r.anim.cancel(); clearTimeout(r.timer); }); rows = []; wall.textContent = ''; }
+
+  function build() {
+    clearRows();
+    if (!all.length) return;
+    var count = rowTarget();
+    builtW = wall.clientWidth;
+    for (var i = 0; i < count; i++) {
+      var el = document.createElement('div'); el.className = 'wall__row';
+      wall.appendChild(el);
+      rows.push({ el: el, dir: i % 2 ? -1 : 1, name: null, anim: null, timer: 0 });
+    }
+    rows.forEach(function (r) { launch(r, true); });
+  }
+
+  function setNames(arr) {
+    var firstLoad = !started; started = true;
+    arr.forEach(function (n) { if (!known[n]) { known[n] = 1; if (!firstLoad) fresh.push(n); } });
+    local.forEach(function (n) { if (arr.indexOf(n) === -1) arr.push(n); });
+    all = arr;
+    queue = shuffle(all.slice());                       // xáo ngẫu nhiên mỗi lần lấy về
+    if (!rows.length || rows.length < rowTarget()) build();
+  }
 
   function fetchList() {
     if (!window.fetch) return;
     lastFetch = Date.now();
     fetch('api/checkins', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : Promise.reject(); })
       .then(function (d) {
-        if (!d || !Array.isArray(d.items)) return;
-        var server = d.items.map(function (i) { return String(i.name || ''); }).filter(Boolean);
-        local.forEach(function (n) { if (server.indexOf(n) === -1) server.unshift(n); });   // tên vừa nhập mà máy chủ chưa kịp trả
-        setNames(server);
+        if (d && Array.isArray(d.items)) setNames(d.items.map(function (i) { return String(i.name || ''); }).filter(Boolean));
       }).catch(function () { /* không có máy chủ: giữ nguyên */ });
   }
 
   window.datMuiWall = {
     add: function (name) {
       if (!name) return;
-      local.push(name);
-      names = [name].concat(names); sig = ''; render();
+      local.push(name); known[name] = 1; all.push(name); fresh.unshift(name); started = true;
+      if (!rows.length) build();
     },
     refresh: fetchList
   };
 
-  // chỉ cập nhật định kỳ khi khu Check-in đang trong tầm nhìn và tab đang mở
+  // dựng lại khi đổi kích thước (xoay máy, hiện phiếu làm khu check-in cao hơn…) nếu số dòng/độ rộng đổi
+  if ('ResizeObserver' in window) {
+    var t = null;
+    new ResizeObserver(function () {
+      clearTimeout(t);
+      t = setTimeout(function () {
+        if (!all.length) return;
+        if (wall.clientWidth !== builtW || rowTarget() !== rows.length) build();
+      }, 250);
+    }).observe(wall);
+  }
+
+  // chỉ cập nhật/chạy khi khu Check-in đang trong tầm nhìn và tab đang mở
+  function setInView(v) {
+    inView = v;
+    rows.forEach(function (r) { if (r.anim) { if (v) r.anim.play(); else r.anim.pause(); } });
+  }
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (en) {
-      inView = en[0].isIntersecting;
+      setInView(en[0].isIntersecting);
       if (inView && Date.now() - lastFetch > POLL_MS) fetchList();
     }, { rootMargin: '200px 0px' }).observe(section);
   }
