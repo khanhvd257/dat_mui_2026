@@ -170,7 +170,12 @@
 
           <div id="cert-result" class="cert" hidden>
             <p class="cert__hello" id="cert-hello" aria-live="polite"></p>
-            <canvas id="cert-canvas" width="1080" height="1500" role="img" aria-label="Chứng nhận số đã đến với gian hàng REPLY 2006: Sóng về Đất Mũi, Tết về muôn nhà"></canvas>
+            <div class="cert__frame">
+              <canvas id="cert-canvas" width="1080" height="1500" role="img" aria-label="Chứng nhận số đã đến với gian hàng REPLY 2006: Sóng về Đất Mũi, Tết về muôn nhà"></canvas>
+              <button type="button" class="cert__zoom" id="cert-zoom" aria-label="Xem chứng nhận toàn màn hình" title="Toàn màn hình">
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+              </button>
+            </div>
             <div class="cert__actions">
               <button type="button" class="btn" id="cert-download">Tải chứng nhận (PNG)</button>
               <button type="button" class="btn btn--ghost" id="cert-share" hidden>Chia sẻ</button>
@@ -318,6 +323,13 @@
     <span class="music-btn__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
     <span class="music-btn__label">Nhạc</span>
   </button>
+
+  <div class="cert-fs" id="cert-fs" role="dialog" aria-modal="true" aria-label="Chứng nhận toàn màn hình" hidden>
+    <img id="cert-fs-img" alt="Chứng nhận số đã đến với gian hàng REPLY 2006">
+    <button type="button" class="cert-fs__close" id="cert-fs-close" aria-label="Đóng toàn màn hình">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
 
   <script src="assets/vendor/leaflet/leaflet.js"></script>
   <script src="js/geodata.js"></script>

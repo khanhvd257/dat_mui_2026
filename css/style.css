@@ -258,7 +258,38 @@ p { margin: 0; }
 .cert { display: grid; gap: 18px; justify-items: center; }
 .cert[hidden], .form[hidden] { display: none; }
 .cert__hello { font: 700 .8rem/1.5 var(--font-title); letter-spacing: .14em; text-transform: uppercase; color: var(--red); text-align: center; }
-#cert-canvas { width: 100%; max-width: 440px; height: auto; box-shadow: 0 16px 44px rgba(0,0,0,.2); }
+.cert__frame { position: relative; width: 100%; max-width: 440px; }
+#cert-canvas { display: block; width: 100%; height: auto; box-shadow: 0 16px 44px rgba(0,0,0,.2); }
+.cert__zoom {
+  position: absolute; top: 10px; right: 10px; width: 44px; height: 44px; display: grid; place-items: center;
+  border: 0; border-radius: 50%; background: rgba(0,0,0,.55); color: #fff; cursor: pointer;
+  transition: background .25s var(--ease), transform .25s var(--ease);
+}
+.cert__zoom:hover { background: var(--red); transform: scale(1.06); }
+.cert__zoom:focus-visible, .cert-fs__close:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+/* xem chứng nhận toàn màn hình – vừa khít mọi kích thước màn hình */
+.cert-fs {
+  position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center;
+  padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+  background: rgba(0,0,0,.94); opacity: 0; transition: opacity .3s var(--ease);
+}
+.cert-fs[hidden] { display: none; }
+.cert-fs.is-open { opacity: 1; }
+.cert-fs img {
+  display: block; width: auto; height: auto;
+  max-width: calc(100vw - 24px); max-height: calc(100vh - 24px);
+  max-height: calc(100dvh - 24px);
+  object-fit: contain; box-shadow: 0 20px 70px rgba(0,0,0,.6);
+  transform: scale(.96); transition: transform .35s var(--ease);
+}
+.cert-fs.is-open img { transform: none; }
+.cert-fs__close {
+  position: absolute; top: max(12px, env(safe-area-inset-top)); right: max(12px, env(safe-area-inset-right));
+  width: 46px; height: 46px; display: grid; place-items: center; border: 0; border-radius: 50%;
+  background: rgba(255,255,255,.16); color: #fff; cursor: pointer; transition: background .25s var(--ease);
+}
+.cert-fs__close:hover { background: var(--red); }
 .cert__actions { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px 18px; }
 
 /* ---------- CÁNH MAI RƠI (sau khi check-in) ---------- */

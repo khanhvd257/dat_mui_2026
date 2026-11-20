@@ -232,6 +232,40 @@
     }).catch(function (e) { if (e && e.name !== 'AbortError') showError('Thiết bị chưa hỗ trợ chia sẻ. Hãy dùng nút Tải chứng nhận.'); });
   });
 
+  /* ---------- toàn màn hình ---------- */
+  var zoomBtn = document.getElementById('cert-zoom');
+  var fs = document.getElementById('cert-fs');
+  var fsImg = document.getElementById('cert-fs-img');
+  var fsClose = document.getElementById('cert-fs-close');
+  var fsUrl = null;
+
+  function fsOpen() {
+    toBlob().then(function (blob) {
+      if (fsUrl) URL.revokeObjectURL(fsUrl);
+      fsUrl = URL.createObjectURL(blob);
+      fsImg.src = fsUrl;
+      fs.hidden = false;
+      document.body.style.overflow = 'hidden';
+      requestAnimationFrame(function () { fs.classList.add('is-open'); });
+      fsClose.focus();
+      // thêm toàn màn hình thật của trình duyệt nếu thiết bị hỗ trợ (iOS dùng lớp phủ phía trên)
+      try { if (fs.requestFullscreen && !document.fullscreenElement) fs.requestFullscreen().catch(function () {}); } catch (e) {}
+    }).catch(function () { showError('Không thể mở chứng nhận toàn màn hình. Hãy thử lại.'); });
+  }
+  function fsHide() {
+    if (fs.hidden) return;
+    fs.classList.remove('is-open');
+    document.body.style.overflow = '';
+    try { if (document.fullscreenElement) document.exitFullscreen().catch(function () {}); } catch (e) {}
+    setTimeout(function () { if (!fs.classList.contains('is-open')) { fs.hidden = true; fsImg.removeAttribute('src'); if (fsUrl) { URL.revokeObjectURL(fsUrl); fsUrl = null; } } }, 300);
+    zoomBtn.focus();
+  }
+  zoomBtn.addEventListener('click', fsOpen);
+  fsClose.addEventListener('click', fsHide);
+  fs.addEventListener('click', function (e) { if (e.target === fs || e.target === fsImg) fsHide(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !fs.hidden) fsHide(); });
+  document.addEventListener('fullscreenchange', function () { if (!document.fullscreenElement && !fs.hidden) fsHide(); });
+
   resetBtn.addEventListener('click', function () { clear(); current = null; showForm(); });
 
   form.addEventListener('submit', function (e) {
