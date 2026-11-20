@@ -296,22 +296,22 @@ p { margin: 0; }
 .checkin__wall {
   position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
   display: flex; flex-direction: column; justify-content: space-evenly;
-  --wall-fs: clamp(2.2rem, 5.6vw, 4.6rem);
-  -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,.2) 0, rgba(0,0,0,.2) 30%, #000 52%);
-          mask-image: linear-gradient(90deg, rgba(0,0,0,.2) 0, rgba(0,0,0,.2) 30%, #000 52%);
+  --wall-fs: clamp(1.7rem, 4.3vw, 3.5rem);
+  -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,.4) 0, rgba(0,0,0,.4) 30%, #000 52%);
+          mask-image: linear-gradient(90deg, rgba(0,0,0,.4) 0, rgba(0,0,0,.4) 30%, #000 52%);
   animation: wall-in 1s var(--ease) both;
 }
 .wall__row { position: relative; flex: none; height: 1.25em; font-size: var(--wall-fs); overflow: hidden; white-space: nowrap; }
 .wall__row b {
   position: absolute; left: 0; top: 0; will-change: transform;
   font: 900 1em/1.25 var(--font-title); text-transform: uppercase; letter-spacing: .01em;
-  color: transparent; -webkit-text-stroke: 1.5px rgba(238,0,51,.38);
+  color: transparent; -webkit-text-stroke: 2px rgba(238,0,51,.7);
 }
-.wall__row b.is-fill { color: rgba(238,0,51,.08); -webkit-text-stroke-color: rgba(238,0,51,.2); }
+.wall__row b.is-fill { color: rgba(238,0,51,.2); -webkit-text-stroke-color: rgba(238,0,51,.45); }
 @media (max-width: 900px) {   /* một cột: làm mờ vùng chữ giới thiệu phía trên để vẫn dễ đọc */
   .checkin__wall {
-    -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,.12) 0, rgba(0,0,0,.12) 46%, #000 60%);
-            mask-image: linear-gradient(180deg, rgba(0,0,0,.12) 0, rgba(0,0,0,.12) 46%, #000 60%);
+    -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,.3) 0, rgba(0,0,0,.3) 56%, #000 66%);
+            mask-image: linear-gradient(180deg, rgba(0,0,0,.3) 0, rgba(0,0,0,.3) 56%, #000 66%);
   }
 }
 @keyframes wall-in { from { opacity: 0; } to { opacity: 1; } }
@@ -319,12 +319,19 @@ p { margin: 0; }
 .checkin.has-cert .checkin__panel { background: transparent; box-shadow: none; border-top-color: transparent; }
 .checkin.has-cert .cert__hello { background: var(--white); padding: 8px 16px; box-shadow: 0 6px 20px rgba(0,0,0,.08); }
 
+/* chưa nhập tên: khu check-in chiếm trọn chiều cao màn hình (trừ thanh menu), nội dung căn giữa; có phiếu thì trở lại chiều cao theo nội dung */
+.checkin:not(.has-cert) {
+  min-height: calc(100vh - var(--header-h, 0px)); min-height: calc(100dvh - var(--header-h, 0px));
+  display: flex; align-items: center;
+}
+.checkin:not(.has-cert) > .checkin__grid { width: 100%; }
+
 /* ---------- CÁNH MAI RƠI (sau khi check-in) ---------- */
 .checkin__panel { position: relative; }
 /* cánh mai rơi nằm SAU tấm phiếu (z-index thấp hơn khung check-in) nên không bao giờ che ảnh phiếu */
 .petals { position: absolute; inset: 0; pointer-events: none; display: none; z-index: 0; }
 .checkin.has-cert .petals { display: block; }
-.petals i {
+.petals i, .hero__petals i {
   position: absolute; top: -40px; width: var(--s, 20px); height: var(--s, 20px);
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-50 -50 100 100'%3E%3Cdefs%3E%3CradialGradient id='g' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0' stop-color='%23FFE98F'/%3E%3Cstop offset='1' stop-color='%23E7A10A'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cg fill='url(%23g)' stroke='%23B06E00' stroke-opacity='.35'%3E%3Ccircle cx='0' cy='-27' r='24'/%3E%3Ccircle cx='25.7' cy='-8.3' r='24'/%3E%3Ccircle cx='15.9' cy='21.8' r='24'/%3E%3Ccircle cx='-15.9' cy='21.8' r='24'/%3E%3Ccircle cx='-25.7' cy='-8.3' r='24'/%3E%3C/g%3E%3Ccircle r='9' fill='%23D9822B'/%3E%3C/svg%3E") center / contain no-repeat; opacity: 0;
   animation: petal-fall var(--d, 9s) linear infinite;

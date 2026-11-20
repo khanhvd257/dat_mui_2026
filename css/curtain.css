@@ -128,3 +128,43 @@ html:not(.has-curtain) .is-split .hl--r .hl-ch, html.hero-play .is-split .hl--r 
   .has-curtain .hero__media img { transform: none; }
   .is-split .hl-ch { opacity: 1 !important; animation: none !important; transform: none !important; }
 }
+
+
+/* ---------- HOA XUÂN MỌC RA KHI MỞ RÈM (cành mai vàng, cành đào hồng rủ từ mép trên) ---------- */
+.hero__bloom { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.bloom { position: absolute; top: -1%; height: auto; aspect-ratio: 600 / 420; overflow: visible; will-change: transform; transform-origin: 8% 0; }
+.bloom--a { left: 5%; width: min(40vw, 540px); }
+.bloom--b { left: 47%; width: min(28vw, 410px); transform-origin: 10% 0; }
+.bloom path { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.bloom .fl { transform: scale(0); }
+
+/* cành vươn dài ra, rồi hoa nở lần lượt dọc theo cành (cùng nhịp với chữ: chỉ chạy sau khi rèm mở) */
+html:not(.has-curtain) .bloom path, html.hero-play .bloom path {
+  animation: bloom-grow var(--t, 1s) cubic-bezier(.45, .1, .3, 1) both;
+  animation-delay: calc(var(--hero-delay, 0s) + .35s + var(--d, 0s));
+}
+html:not(.has-curtain) .bloom .fl, html.hero-play .bloom .fl {
+  animation: bloom-pop .95s cubic-bezier(.2, 1.35, .4, 1) both;
+  animation-delay: calc(var(--hero-delay, 0s) + .45s + var(--d, 0s));
+}
+html:not(.has-curtain) .bloom--a, html.hero-play .bloom--a { animation: bloom-sway 7s ease-in-out 5s infinite alternate; }
+html:not(.has-curtain) .bloom--b, html.hero-play .bloom--b { animation: bloom-sway 8.5s ease-in-out 5.5s infinite alternate-reverse; }
+@keyframes bloom-grow { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes bloom-pop  { from { transform: scale(0) rotate(-60deg); } to { transform: scale(1) rotate(0); } }
+@keyframes bloom-sway { from { transform: rotate(-.9deg); } to { transform: rotate(.9deg); } }
+
+/* vài cánh hoa rơi nhẹ sau khi hoa đã nở */
+.hero__petals { position: absolute; inset: 0; --fall: 105vh; overflow: hidden; }
+.has-curtain:not(.hero-play) .hero__petals i { animation-play-state: paused; }
+
+@media (max-width: 720px) {
+  .bloom--a { left: -4%; top: 28px; width: 84vw; }
+  .bloom--b { left: 50%; top: 40px; width: 52vw; }
+  /* hoa phía trên mờ dần để không đè lên thanh điều hướng */
+  .hero__bloom { -webkit-mask-image: linear-gradient(180deg, transparent 0, transparent 52px, #000 112px); mask-image: linear-gradient(180deg, transparent 0, transparent 52px, #000 112px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bloom path, .bloom .fl { animation-delay: 0s !important; }
+  .bloom, .hero__petals { animation: none !important; }
+  .hero__petals { display: none; }
+}

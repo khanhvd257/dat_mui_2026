@@ -32,6 +32,11 @@
 
   <!-- Cột sóng minh họa (hình vẽ) – dùng lại nhiều nơi qua <use>; màu theo `color` của phần tử cha -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <g id="mai-f"><g fill="#FFD43B" stroke="#C98A00" stroke-opacity=".55" stroke-width="2"><circle cx="0" cy="-27" r="24"/><circle cx="25.7" cy="-8.3" r="24"/><circle cx="15.9" cy="21.8" r="24"/><circle cx="-15.9" cy="21.8" r="24"/><circle cx="-25.7" cy="-8.3" r="24"/></g><circle r="9" fill="#E0801A"/></g>
+      <g id="dao-f"><g fill="#FFB6CB" stroke="#D9486F" stroke-opacity=".5" stroke-width="2"><circle cx="0" cy="-27" r="24"/><circle cx="25.7" cy="-8.3" r="24"/><circle cx="15.9" cy="21.8" r="24"/><circle cx="-15.9" cy="21.8" r="24"/><circle cx="-25.7" cy="-8.3" r="24"/></g><circle r="8" fill="#E0457A"/></g>
+      <g id="bud-f"><circle r="26" fill="#F2A81D" stroke="#B26A00" stroke-opacity=".5" stroke-width="2"/></g>
+    </defs>
     <symbol id="tower-mast" viewBox="0 0 120 800">
       <g fill="none" stroke="currentColor" stroke-linecap="square">
         <path style="stroke-width:var(--sw,1.2px)" vector-effect="non-scaling-stroke" d="M57.0 70L21.0 800M63.0 70L99.0 800M57.0 70.0H63.0M57.0 70.0L64.1 93.3M55.9 93.3H64.1M64.1 93.3L54.5 121.7M54.5 121.7H65.5M54.5 121.7L67.1 152.4M52.9 152.4H67.1M67.1 152.4L51.3 184.7M51.3 184.7H68.7M51.3 184.7L70.3 218.2M49.7 218.2H70.3M70.3 218.2L48.0 252.8M48.0 252.8H72.0M48.0 252.8L73.8 288.3M46.2 288.3H73.8M73.8 288.3L44.4 324.5M44.4 324.5H75.6M44.4 324.5L77.4 361.4M42.6 361.4H77.4M77.4 361.4L40.8 399.0M40.8 399.0H79.2M40.8 399.0L81.1 437.1M38.9 437.1H81.1M81.1 437.1L37.0 475.7M37.0 475.7H83.0M37.0 475.7L84.9 514.8M35.1 514.8H84.9M84.9 514.8L33.1 554.4M33.1 554.4H86.9M33.1 554.4L88.9 594.4M31.1 594.4H88.9M88.9 594.4L29.1 634.8M29.1 634.8H90.9M29.1 634.8L92.9 675.6M27.1 675.6H92.9M92.9 675.6L25.1 716.7M25.1 716.7H94.9M25.1 716.7L96.9 758.2M23.1 758.2H96.9M96.9 758.2L21.0 800.0M21.0 800.0H99.0"/>
@@ -86,6 +91,133 @@
       <div class="hero__towers" aria-hidden="true">
         <span class="tw tw--main" data-parallax="0.08"><svg viewBox="0 0 120 800" focusable="false"><use href="#tower-mast"/></svg><i class="tw__wave" style="--i:0"></i><i class="tw__wave" style="--i:1"></i><i class="tw__wave" style="--i:2"></i><i class="tw__wave" style="--i:3"></i></span>
       </div>
+
+      <!-- hoa xuân (mai vàng, đào hồng) mọc ra khi rèm mở -->
+      <div class="hero__bloom" aria-hidden="true">
+<svg class="bloom bloom--a" viewBox="0 0 600 420" focusable="false">
+<path d="M30.0 -4.0 Q82.9 47.5 156.2 56.7 Q207.3 104.6 261.2 149.2 Q302.2 206.3 351.6 256.1" pathLength="1" stroke="#5b3a22" stroke-width="5.2" style="--d:0.00s;--t:2.28s"/>
+<path d="M156.2 56.7 Q209.6 28.3 270.0 30.6 Q325.2 50.2 382.7 61.4" pathLength="1" stroke="#5b3a22" stroke-width="3.3" style="--d:0.76s;--t:1.47s"/>
+<path d="M261.2 149.2 Q254.1 208.4 241.8 266.7 Q265.1 324.0 255.3 385.1" pathLength="1" stroke="#5b3a22" stroke-width="3.3" style="--d:1.52s;--t:1.49s"/>
+<path d="M351.6 256.1 Q401.8 306.8 471.9 319.4" pathLength="1" stroke="#5b3a22" stroke-width="3.3" style="--d:2.28s;--t:1.63s"/>
+<path d="M270.0 30.6 Q297.7 59.9 337.7 64.6 Q364.4 91.6 395.1 114.1" pathLength="1" stroke="#5b3a22" stroke-width="2.1" style="--d:1.49s;--t:1.11s"/>
+<path d="M382.7 61.4 Q417.6 39.7 458.2 34.1 Q496.3 54.5 538.0 43.5" pathLength="1" stroke="#5b3a22" stroke-width="2.1" style="--d:2.22s;--t:1.15s"/>
+<path d="M241.8 266.7 Q211.3 291.4 201.9 329.4 Q182.8 362.4 151.8 384.4" pathLength="1" stroke="#5b3a22" stroke-width="2.1" style="--d:2.26s;--t:1.10s"/>
+<path d="M471.9 319.4 Q516.3 312.2 560.2 302.5" pathLength="1" stroke="#5b3a22" stroke-width="2.1" style="--d:3.09s;--t:1.23s"/>
+<path d="M337.7 64.6 Q356.3 82.8 366.8 106.7 Q371.9 133.2 391.9 151.4" pathLength="1" stroke="#5b3a22" stroke-width="1.4" style="--d:2.05s;--t:0.90s"/>
+<path d="M395.1 114.1 Q417.4 127.0 442.1 134.6 Q461.5 151.9 475.3 173.8" pathLength="1" stroke="#5b3a22" stroke-width="1.4" style="--d:2.60s;--t:0.90s"/>
+<path d="M458.2 34.1 Q479.4 49.4 502.4 61.9 Q513.5 86.1 533.4 103.9" pathLength="1" stroke="#5b3a22" stroke-width="1.4" style="--d:2.80s;--t:0.90s"/>
+<path d="M538.0 43.5 Q562.4 32.0 587.9 23.4" pathLength="1" stroke="#5b3a22" stroke-width="1.4" style="--d:3.37s;--t:0.92s"/>
+<path d="M201.9 329.4 Q179.8 333.3 157.4 334.8 Q135.3 341.2 118.4 356.8" pathLength="1" stroke="#5b3a22" stroke-width="1.4" style="--d:2.81s;--t:0.84s"/>
+<path d="M151.8 384.4 Q129.5 383.5 107.4 386.2 Q85.4 392.3 63.0 387.8" pathLength="1" stroke="#5b3a22" stroke-width="1.4" style="--d:3.36s;--t:0.84s"/>
+<g transform="translate(272.8 32.3) rotate(283) scale(0.27)"><use class="fl" href="#mai-f" style="--d:1.54s"/></g>
+<g transform="translate(271.1 46.0) rotate(182) scale(0.35)"><use class="fl" href="#mai-f" style="--d:1.67s"/></g>
+<g transform="translate(336.7 66.0) rotate(279) scale(0.37)"><use class="fl" href="#mai-f" style="--d:2.10s"/></g>
+<g transform="translate(381.7 63.8) rotate(338) scale(0.38)"><use class="fl" href="#mai-f" style="--d:2.27s"/></g>
+<g transform="translate(245.8 263.6) rotate(168) scale(0.36)"><use class="fl" href="#mai-f" style="--d:2.31s"/></g>
+<g transform="translate(355.6 256.9) rotate(299) scale(0.43)"><use class="fl" href="#mai-f" style="--d:2.33s"/></g>
+<g transform="translate(381.6 56.5) rotate(5) scale(0.27)"><use class="fl" href="#mai-f" style="--d:2.40s"/></g>
+<g transform="translate(235.0 284.1) rotate(307) scale(0.35)"><use class="fl" href="#mai-f" style="--d:2.44s"/></g>
+<g transform="translate(363.8 110.7) rotate(323) scale(0.28)"><use class="fl" href="#mai-f" style="--d:2.54s"/></g>
+<g transform="translate(393.1 117.6) rotate(330) scale(0.34)"><use class="fl fl--bud" href="#bud-f" style="--d:2.65s"/></g>
+<g transform="translate(457.4 32.2) rotate(125) scale(0.30)"><use class="fl" href="#mai-f" style="--d:2.85s"/></g>
+<g transform="translate(198.8 326.6) rotate(258) scale(0.42)"><use class="fl fl--bud" href="#bud-f" style="--d:2.86s"/></g>
+<g transform="translate(457.7 45.4) rotate(314) scale(0.33)"><use class="fl fl--bud" href="#bud-f" style="--d:2.98s"/></g>
+<g transform="translate(211.2 339.0) rotate(85) scale(0.35)"><use class="fl" href="#mai-f" style="--d:2.99s"/></g>
+<g transform="translate(390.7 153.2) rotate(134) scale(0.39)"><use class="fl" href="#mai-f" style="--d:2.99s"/></g>
+<g transform="translate(253.4 385.0) rotate(313) scale(0.33)"><use class="fl" href="#mai-f" style="--d:3.05s"/></g>
+<g transform="translate(443.9 136.3) rotate(108) scale(0.34)"><use class="fl" href="#mai-f" style="--d:3.10s"/></g>
+<g transform="translate(470.5 315.5) rotate(247) scale(0.42)"><use class="fl" href="#mai-f" style="--d:3.14s"/></g>
+<g transform="translate(269.7 400.2) rotate(99) scale(0.37)"><use class="fl" href="#mai-f" style="--d:3.18s"/></g>
+<g transform="translate(157.0 331.4) rotate(102) scale(0.35)"><use class="fl fl--bud" href="#bud-f" style="--d:3.28s"/></g>
+<g transform="translate(503.1 60.6) rotate(25) scale(0.31)"><use class="fl fl--bud" href="#bud-f" style="--d:3.30s"/></g>
+<g transform="translate(147.9 383.4) rotate(146) scale(0.45)"><use class="fl" href="#mai-f" style="--d:3.41s"/></g>
+<g transform="translate(536.9 40.1) rotate(213) scale(0.35)"><use class="fl" href="#mai-f" style="--d:3.42s"/></g>
+<g transform="translate(162.2 379.0) rotate(104) scale(0.36)"><use class="fl" href="#mai-f" style="--d:3.54s"/></g>
+<g transform="translate(474.7 173.8) rotate(74) scale(0.43)"><use class="fl fl--bud" href="#bud-f" style="--d:3.55s"/></g>
+<g transform="translate(122.0 360.5) rotate(113) scale(0.39)"><use class="fl" href="#mai-f" style="--d:3.70s"/></g>
+<g transform="translate(536.4 100.0) rotate(226) scale(0.34)"><use class="fl fl--bud" href="#bud-f" style="--d:3.75s"/></g>
+<g transform="translate(561.5 300.2) rotate(79) scale(0.34)"><use class="fl fl--bud" href="#bud-f" style="--d:3.76s"/></g>
+<g transform="translate(109.8 383.1) rotate(355) scale(0.28)"><use class="fl" href="#mai-f" style="--d:3.82s"/></g>
+<g transform="translate(516.8 107.8) rotate(311) scale(0.36)"><use class="fl" href="#mai-f" style="--d:3.88s"/></g>
+<g transform="translate(576.4 300.3) rotate(260) scale(0.27)"><use class="fl" href="#mai-f" style="--d:3.89s"/></g>
+<g transform="translate(60.1 391.7) rotate(337) scale(0.30)"><use class="fl" href="#mai-f" style="--d:4.24s"/></g>
+</svg>
+<svg class="bloom bloom--b" viewBox="0 0 600 420" focusable="false">
+<path d="M40.0 -4.0 Q81.6 34.9 129.8 65.1 Q170.3 110.4 230.8 116.7 Q256.1 172.2 312.7 194.9" pathLength="1" stroke="#5a3328" stroke-width="5.2" style="--d:0.00s;--t:1.93s"/>
+<path d="M129.8 65.1 Q180.0 85.7 233.9 80.3 Q274.7 118.2 330.2 122.9" pathLength="1" stroke="#5a3328" stroke-width="3.3" style="--d:0.64s;--t:1.36s"/>
+<path d="M230.8 116.7 Q229.3 160.4 227.6 204.2 Q212.4 247.6 225.9 291.7" pathLength="1" stroke="#5a3328" stroke-width="3.3" style="--d:1.29s;--t:1.21s"/>
+<path d="M312.7 194.9 Q361.4 210.3 412.2 215.5 Q464.6 212.9 511.9 235.4" pathLength="1" stroke="#5a3328" stroke-width="3.3" style="--d:1.93s;--t:1.33s"/>
+<path d="M233.9 80.3 Q257.8 62.1 287.7 64.2 Q316.4 60.8 343.4 71.3" pathLength="1" stroke="#5a3328" stroke-width="2.1" style="--d:1.33s;--t:0.94s"/>
+<path d="M330.2 122.9 Q358.0 105.3 390.9 105.8 Q423.1 102.2 453.6 113.0" pathLength="1" stroke="#5a3328" stroke-width="2.1" style="--d:2.01s;--t:1.00s"/>
+<path d="M227.6 204.2 Q218.0 229.3 196.1 245.1 Q185.9 270.4 162.0 283.8" pathLength="1" stroke="#5a3328" stroke-width="2.1" style="--d:1.89s;--t:0.90s"/>
+<path d="M225.9 291.7 Q209.3 307.1 198.2 326.8 Q189.4 347.4 178.4 366.9" pathLength="1" stroke="#5a3328" stroke-width="2.1" style="--d:2.50s;--t:0.84s"/>
+<path d="M412.2 215.5 Q438.6 201.5 468.1 197.6 Q496.8 204.1 524.9 212.5" pathLength="1" stroke="#5a3328" stroke-width="2.1" style="--d:2.60s;--t:0.96s"/>
+<path d="M511.9 235.4 Q523.6 258.3 536.9 280.3 Q533.7 307.3 547.4 330.7" pathLength="1" stroke="#5a3328" stroke-width="2.1" style="--d:3.26s;--t:0.90s"/>
+<path d="M287.7 64.2 Q300.9 72.5 305.2 87.5 Q315.4 98.6 318.5 113.4" pathLength="1" stroke="#5a3328" stroke-width="1.4" style="--d:1.79s;--t:0.70s"/>
+<path d="M343.4 71.3 Q355.4 80.2 362.3 93.4 Q370.1 105.7 377.3 118.3" pathLength="1" stroke="#5a3328" stroke-width="1.4" style="--d:2.26s;--t:0.70s"/>
+<path d="M390.9 105.8 Q405.9 116.8 418.3 130.6 Q426.7 147.1 438.1 161.8" pathLength="1" stroke="#5a3328" stroke-width="1.4" style="--d:2.51s;--t:0.77s"/>
+<path d="M453.6 113.0 Q470.7 102.2 489.9 95.9 Q509.6 90.7 529.9 92.2" pathLength="1" stroke="#5a3328" stroke-width="1.4" style="--d:3.01s;--t:0.80s"/>
+<path d="M196.1 245.1 Q179.4 250.1 170.4 264.9 Q158.9 276.6 145.1 285.4" pathLength="1" stroke="#5a3328" stroke-width="1.4" style="--d:2.34s;--t:0.73s"/>
+<path d="M162.0 283.8 Q144.4 285.2 127.5 279.9 Q110.3 274.7 92.8 278.1" pathLength="1" stroke="#5a3328" stroke-width="1.4" style="--d:2.79s;--t:0.75s"/>
+<path d="M198.2 326.8 Q184.5 329.4 174.7 339.5 Q162.1 345.1 153.8 356.2" pathLength="1" stroke="#5a3328" stroke-width="1.4" style="--d:2.92s;--t:0.68s"/>
+<path d="M178.4 366.9 Q167.7 374.3 154.7 373.4 Q144.1 379.8 134.7 387.8" pathLength="1" stroke="#5a3328" stroke-width="1.4" style="--d:3.34s;--t:0.66s"/>
+<path d="M468.1 197.6 Q480.3 209.0 493.9 218.6 Q509.5 225.9 519.4 240.0" pathLength="1" stroke="#5a3328" stroke-width="1.4" style="--d:3.08s;--t:0.74s"/>
+<path d="M524.9 212.5 Q539.8 198.9 558.5 191.5" pathLength="1" stroke="#5a3328" stroke-width="1.4" style="--d:3.56s;--t:0.79s"/>
+<path d="M536.9 280.3 Q547.2 291.5 559.1 300.9 Q573.8 306.5 583.8 318.5" pathLength="1" stroke="#5a3328" stroke-width="1.4" style="--d:3.71s;--t:0.71s"/>
+<path d="M547.4 330.7 Q557.7 339.4 566.1 349.9 Q567.5 364.0 577.2 374.3" pathLength="1" stroke="#5a3328" stroke-width="1.4" style="--d:4.16s;--t:0.68s"/>
+<g transform="translate(234.0 80.3) rotate(174) scale(0.29)"><use class="fl" href="#dao-f" style="--d:1.38s"/></g>
+<g transform="translate(284.5 61.3) rotate(133) scale(0.34)"><use class="fl" href="#dao-f" style="--d:1.84s"/></g>
+<g transform="translate(225.9 200.7) rotate(339) scale(0.42)"><use class="fl fl--bud" href="#bud-f" style="--d:1.94s"/></g>
+<g transform="translate(316.6 198.6) rotate(46) scale(0.39)"><use class="fl" href="#dao-f" style="--d:1.98s"/></g>
+<g transform="translate(331.5 120.9) rotate(162) scale(0.36)"><use class="fl" href="#dao-f" style="--d:2.06s"/></g>
+<g transform="translate(307.7 90.4) rotate(280) scale(0.44)"><use class="fl fl--bud" href="#bud-f" style="--d:2.20s"/></g>
+<g transform="translate(346.2 67.5) rotate(146) scale(0.39)"><use class="fl" href="#dao-f" style="--d:2.31s"/></g>
+<g transform="translate(196.1 241.3) rotate(80) scale(0.38)"><use class="fl fl--bud" href="#bud-f" style="--d:2.39s"/></g>
+<g transform="translate(342.2 84.3) rotate(24) scale(0.38)"><use class="fl fl--bud" href="#bud-f" style="--d:2.44s"/></g>
+<g transform="translate(226.2 289.2) rotate(128) scale(0.35)"><use class="fl" href="#dao-f" style="--d:2.55s"/></g>
+<g transform="translate(319.1 111.4) rotate(109) scale(0.42)"><use class="fl" href="#dao-f" style="--d:2.55s"/></g>
+<g transform="translate(394.5 107.3) rotate(241) scale(0.38)"><use class="fl" href="#dao-f" style="--d:2.56s"/></g>
+<g transform="translate(413.8 213.8) rotate(35) scale(0.31)"><use class="fl fl--bud" href="#bud-f" style="--d:2.65s"/></g>
+<g transform="translate(360.9 90.1) rotate(52) scale(0.37)"><use class="fl" href="#dao-f" style="--d:2.66s"/></g>
+<g transform="translate(299.6 108.4) rotate(22) scale(0.34)"><use class="fl" href="#dao-f" style="--d:2.68s"/></g>
+<g transform="translate(387.9 107.5) rotate(234) scale(0.36)"><use class="fl" href="#dao-f" style="--d:2.69s"/></g>
+<g transform="translate(166.4 268.1) rotate(231) scale(0.30)"><use class="fl" href="#dao-f" style="--d:2.76s"/></g>
+<g transform="translate(164.1 286.8) rotate(77) scale(0.33)"><use class="fl" href="#dao-f" style="--d:2.84s"/></g>
+<g transform="translate(179.3 261.6) rotate(314) scale(0.45)"><use class="fl fl--bud" href="#bud-f" style="--d:2.89s"/></g>
+<g transform="translate(418.7 133.7) rotate(263) scale(0.38)"><use class="fl" href="#dao-f" style="--d:2.94s"/></g>
+<g transform="translate(201.9 327.3) rotate(306) scale(0.32)"><use class="fl" href="#dao-f" style="--d:2.97s"/></g>
+<g transform="translate(378.3 119.3) rotate(5) scale(0.45)"><use class="fl" href="#dao-f" style="--d:3.02s"/></g>
+<g transform="translate(452.1 115.8) rotate(322) scale(0.36)"><use class="fl" href="#dao-f" style="--d:3.06s"/></g>
+<g transform="translate(432.3 129.0) rotate(85) scale(0.37)"><use class="fl fl--bud" href="#bud-f" style="--d:3.07s"/></g>
+<g transform="translate(147.1 281.5) rotate(235) scale(0.34)"><use class="fl fl--bud" href="#bud-f" style="--d:3.12s"/></g>
+<g transform="translate(467.5 196.5) rotate(162) scale(0.37)"><use class="fl" href="#dao-f" style="--d:3.13s"/></g>
+<g transform="translate(444.4 114.7) rotate(27) scale(0.43)"><use class="fl fl--bud" href="#bud-f" style="--d:3.19s"/></g>
+<g transform="translate(129.8 281.6) rotate(181) scale(0.33)"><use class="fl" href="#dao-f" style="--d:3.22s"/></g>
+<g transform="translate(176.6 338.6) rotate(175) scale(0.39)"><use class="fl" href="#dao-f" style="--d:3.31s"/></g>
+<g transform="translate(515.8 232.1) rotate(356) scale(0.39)"><use class="fl" href="#dao-f" style="--d:3.31s"/></g>
+<g transform="translate(436.5 162.3) rotate(332) scale(0.41)"><use class="fl" href="#dao-f" style="--d:3.33s"/></g>
+<g transform="translate(175.2 370.2) rotate(174) scale(0.38)"><use class="fl" href="#dao-f" style="--d:3.39s"/></g>
+<g transform="translate(486.7 96.2) rotate(166) scale(0.27)"><use class="fl" href="#dao-f" style="--d:3.46s"/></g>
+<g transform="translate(496.9 221.1) rotate(59) scale(0.38)"><use class="fl" href="#dao-f" style="--d:3.50s"/></g>
+<g transform="translate(91.0 281.2) rotate(7) scale(0.40)"><use class="fl fl--bud" href="#bud-f" style="--d:3.59s"/></g>
+<g transform="translate(523.4 214.0) rotate(310) scale(0.31)"><use class="fl" href="#dao-f" style="--d:3.61s"/></g>
+<g transform="translate(154.2 359.7) rotate(159) scale(0.43)"><use class="fl fl--bud" href="#bud-f" style="--d:3.65s"/></g>
+<g transform="translate(150.7 376.3) rotate(198) scale(0.28)"><use class="fl" href="#dao-f" style="--d:3.72s"/></g>
+<g transform="translate(534.4 204.8) rotate(77) scale(0.36)"><use class="fl" href="#dao-f" style="--d:3.74s"/></g>
+<g transform="translate(539.7 278.9) rotate(223) scale(0.37)"><use class="fl" href="#dao-f" style="--d:3.76s"/></g>
+<g transform="translate(528.3 94.2) rotate(244) scale(0.45)"><use class="fl" href="#dao-f" style="--d:3.86s"/></g>
+<g transform="translate(516.8 240.4) rotate(188) scale(0.41)"><use class="fl" href="#dao-f" style="--d:3.86s"/></g>
+<g transform="translate(561.3 189.9) rotate(318) scale(0.45)"><use class="fl" href="#dao-f" style="--d:4.00s"/></g>
+<g transform="translate(132.7 387.2) rotate(345) scale(0.40)"><use class="fl" href="#dao-f" style="--d:4.05s"/></g>
+<g transform="translate(562.1 302.5) rotate(260) scale(0.32)"><use class="fl" href="#dao-f" style="--d:4.12s"/></g>
+<g transform="translate(545.4 332.6) rotate(344) scale(0.32)"><use class="fl fl--bud" href="#bud-f" style="--d:4.21s"/></g>
+<g transform="translate(570.5 304.1) rotate(63) scale(0.31)"><use class="fl fl--bud" href="#bud-f" style="--d:4.25s"/></g>
+<g transform="translate(565.0 349.7) rotate(149) scale(0.38)"><use class="fl fl--bud" href="#bud-f" style="--d:4.55s"/></g>
+<g transform="translate(547.0 358.3) rotate(146) scale(0.43)"><use class="fl fl--bud" href="#bud-f" style="--d:4.68s"/></g>
+<g transform="translate(574.4 372.4) rotate(37) scale(0.45)"><use class="fl fl--bud" href="#bud-f" style="--d:4.89s"/></g>
+</svg>
+<div class="hero__petals"><i style="left:25%;--s:22px;--d:8.8s;--x:64px;animation-delay:7.8s"></i><i style="left:58%;--s:23px;--d:8.1s;--x:30px;animation-delay:5.8s"></i><i style="left:25%;--s:25px;--d:10.8s;--x:50px;animation-delay:7.8s"></i><i style="left:63%;--s:16px;--d:9.4s;--x:-52px;animation-delay:11.3s"></i><i style="left:52%;--s:25px;--d:8.1s;--x:-74px;animation-delay:4.9s"></i><i style="left:93%;--s:14px;--d:9.8s;--x:-83px;animation-delay:10.9s"></i><i style="left:28%;--s:23px;--d:12.3s;--x:9px;animation-delay:9.9s"></i><i style="left:90%;--s:20px;--d:12.4s;--x:57px;animation-delay:7.5s"></i><i style="left:91%;--s:19px;--d:8.6s;--x:-56px;animation-delay:8.0s"></i><i style="left:27%;--s:24px;--d:10.6s;--x:70px;animation-delay:11.2s"></i><i style="left:43%;--s:20px;--d:11.4s;--x:46px;animation-delay:8.8s"></i></div>
+</div>
 
       <div class="hero__content">
         <p class="eyebrow eyebrow--light">VIETTEL CÀ MAU <span>|</span> ĐẤT MŨI</p>
