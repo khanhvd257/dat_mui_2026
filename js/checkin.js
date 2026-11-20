@@ -23,8 +23,9 @@
   var current = null;
 
   // cánh mai rơi trên khung chứng nhận (CSS animation, tắt khi người dùng giảm chuyển động)
+  function setFall() { petalBox.style.setProperty('--fall', (section.offsetHeight + 60) + 'px'); }
   function startPetals() {
-    petalBox.style.setProperty('--fall', (section.offsetHeight + 60) + 'px');
+    setFall();
     if (petalBox.childElementCount) return;
     for (var i = 0; i < 16; i++) {
       var p = document.createElement('i');
@@ -293,6 +294,11 @@
     showCert(data, true);
   });
   input.addEventListener('input', function () { nameError.hidden = true; input.removeAttribute('aria-invalid'); });
+
+  // mai rơi ngay từ lúc vào trang (cả khi chưa check-in); độ cao rơi theo chiều cao khu check-in
+  startPetals();
+  if ('ResizeObserver' in window) new ResizeObserver(setFall).observe(section);
+  else window.addEventListener('resize', setFall);
 
   // khách đã check-in trước đó trên thiết bị này
   var saved = load();
