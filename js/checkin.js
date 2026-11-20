@@ -1,7 +1,7 @@
-/* Check-in & Chứng nhận số – chạy hoàn toàn trên trình duyệt, không gửi dữ liệu đi đâu.
-   Tên và thời điểm check-in chỉ lưu trong localStorage của thiết bị.
-   Lưu ý: số chứng nhận được sinh ngẫu nhiên trên máy khách, mang tính lưu niệm
-   (không có máy chủ để xác thực). */
+/* Check-in & Chứng nhận số – chứng nhận được vẽ ngay trên trình duyệt.
+   Tên, thời điểm và số chứng nhận lưu trong localStorage của thiết bị và được gửi lên máy chủ
+   của trang (POST api/checkin → data/checkins.json) để chạy trên dải chữ phía sau phiếu.
+   Lưu ý: số chứng nhận được sinh ngẫu nhiên trên máy khách, mang tính lưu niệm. */
 (function () {
   'use strict';
 
@@ -266,6 +266,17 @@
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !fs.hidden) fsHide(); });
   document.addEventListener('fullscreenchange', function () { if (!document.fullscreenElement && !fs.hidden) fsHide(); });
 
+  /* ---------- gửi lên máy chủ (nếu có) ---------- */
+  function sendCheckin(d) {
+    if (!window.fetch || !d || d.sent) return;
+    fetch('api/checkin', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true,
+      body: JSON.stringify({ name: d.name, serial: d.serial })
+    }).then(function (r) {
+      if (r.ok) { d.sent = true; if (current && current.serial === d.serial) save(d); if (window.datMuiWall) window.datMuiWall.refresh(); }
+    }).catch(function () { /* không có máy chủ / mất mạng: lần tải sau sẽ thử gửi lại */ });
+  }
+
   resetBtn.addEventListener('click', function () { clear(); current = null; showForm(); });
 
   form.addEventListener('submit', function (e) {
@@ -276,6 +287,8 @@
     var ts = Date.now();
     var data = { name: name, ts: ts, serial: makeSerial(ts) };
     save(data);
+    sendCheckin(data);
+    if (window.datMuiWall) window.datMuiWall.add(data.name);
     if (window.datMuiMusic) window.datMuiMusic.start();   // lượt chạm của khách cho phép phát nhạc
     showCert(data, true);
   });
@@ -283,5 +296,5 @@
 
   // khách đã check-in trước đó trên thiết bị này
   var saved = load();
-  if (saved && saved.name && saved.serial) showCert(saved, false);
+  if (saved && saved.name && saved.serial) { showCert(saved, false); sendCheckin(saved); }
 })();

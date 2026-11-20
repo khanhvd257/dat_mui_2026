@@ -1,0 +1,10 @@
+{
+  "name": "dat-mui-2026",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "redis": "^4.7.0"
+  }
+}
