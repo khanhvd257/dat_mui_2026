@@ -16,10 +16,12 @@ Không cần cài thư viện (Node ≥ 14). Server phục vụ trang và lưu c
 
 ## Triển khai trên Vercel
 
-Vercel không có ổ đĩa ghi lâu dài nên không dùng `server.js`; thay vào đó các hàm trong `api/` lưu vào Redis (Upstash), cùng đường dẫn `/api/checkin` và `/api/checkins` nên giao diện không đổi.
+Vercel không có ổ đĩa ghi lâu dài nên không dùng `server.js`; thay vào đó các hàm trong `api/` lưu vào Redis, cùng đường dẫn `/api/checkin` và `/api/checkins` nên giao diện không đổi.
 
 1. Đẩy mã lên Git rồi Import project vào Vercel (không cần build, Framework Preset: Other).
-2. Vào project → **Storage / Marketplace** → thêm **Upstash Redis** và nối vào project. Vercel tự thêm biến môi trường `KV_REST_API_URL`, `KV_REST_API_TOKEN` (hoặc `UPSTASH_REDIS_REST_*`).
-3. Deploy lại. Xem/xuất danh sách tên trong bảng điều khiển Upstash (key `reply2006:checkins`).
+2. Nối một Redis vào project (Storage / Marketplace), tick cả **Production** và **Preview**. Hàm tự nhận một trong các biến:
+   - `KV_REDIS_URL` hoặc `REDIS_URL` (dạng `redis://…` / `rediss://…`) – kết nối trực tiếp qua thư viện `redis`.
+   - `KV_REST_API_URL` + `KV_REST_API_TOKEN` hoặc `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` – kết nối REST (Upstash), ưu tiên nếu có.
+3. **Redeploy** (biến môi trường chỉ có hiệu lực ở bản deploy mới). Danh sách tên nằm ở key `reply2006:checkins`.
 
 `server.js` và `data/` được loại khỏi bản deploy bằng `.vercelignore`; `server.js` chỉ để chạy thử trên máy.
