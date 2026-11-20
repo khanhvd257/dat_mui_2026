@@ -319,6 +319,19 @@ p { margin: 0; }
 .checkin.has-cert .checkin__panel { background: transparent; box-shadow: none; border-top-color: transparent; }
 .checkin.has-cert .cert__hello { background: var(--white); padding: 8px 16px; box-shadow: 0 6px 20px rgba(0,0,0,.08); }
 
+/* ---------- HOA MAI, HOA ĐÀO Ở TIÊU ĐỀ CHECK-IN ---------- */
+.checkin__intro { position: relative; }
+.tbloom { position: absolute; left: 156px; top: -32px; width: min(260px, calc(100% - 156px)); height: auto; aspect-ratio: 260 / 70; overflow: visible; pointer-events: none; }
+@media (max-width: 520px) { .tbloom { top: -25px; } }
+.tbloom path { fill: none; stroke: #5b3a22; stroke-linecap: round; stroke-linejoin: round; }
+.js .tbloom path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.js .tbloom .fl { transform: scale(0); }
+.checkin__intro.is-in .tbloom path { animation: bloom-grow var(--t, 1s) cubic-bezier(.45, .1, .3, 1) both; animation-delay: calc(.5s + var(--d, 0s)); }
+.checkin__intro.is-in .tbloom .fl { animation: bloom-pop .9s cubic-bezier(.2, 1.35, .4, 1) both; animation-delay: calc(.6s + var(--d, 0s)); }
+@media (prefers-reduced-motion: reduce) {
+  .checkin__intro.is-in .tbloom path, .checkin__intro.is-in .tbloom .fl { animation-delay: 0s !important; }
+}
+
 /* chưa nhập tên: khu check-in chiếm trọn chiều cao màn hình (trừ thanh menu), nội dung căn giữa; có phiếu thì trở lại chiều cao theo nội dung */
 .checkin:not(.has-cert) {
   min-height: calc(100vh - var(--header-h, 0px)); min-height: calc(100dvh - var(--header-h, 0px));
